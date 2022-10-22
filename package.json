@@ -1,7 +1,7 @@
 {
   "author": "Yanming Xu <xymzhs@gmail.com>",
   "name": "bit",
-  "description": "A lib to create, digitally sign, and broadcast a Bitcoin transaction in pure javascript",
+  "description": "Pure JavaScript from-scratch zero-dependency implementation of Bitcoin for educational purposes",
   "files": [
     "dist"
   ],

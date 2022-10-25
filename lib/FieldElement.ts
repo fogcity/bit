@@ -1,4 +1,4 @@
-class FieldElement {
+export class FieldElement {
     constructor(public num: number, public prime: number) {
         if (num >= prime || num < 0) {
             throw new Error(`Num ${num} not in field range 0 to ${prime - 1}`);
@@ -29,7 +29,7 @@ class FieldElement {
     }
     mul(fe: FieldElement) {
         if (!this.isSameField(fe)) {
-            throw new Error('Cannot sub two numbers in different Fields');
+            throw new Error('Cannot sub mul numbers in different Fields');
         }
         const num = (this.num * fe.num) % this.prime
         return new FieldElement(num, this.prime)
@@ -42,7 +42,7 @@ class FieldElement {
     }
     div(fe: FieldElement) {
         if (!this.isSameField(fe)) {
-            throw new Error('Cannot sub two numbers in different Fields');
+            throw new Error('Cannot sub div numbers in different Fields');
         }
         const n = fe.pow(this.prime - 2)
         return this.mul(n)

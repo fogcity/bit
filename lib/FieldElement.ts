@@ -48,3 +48,8 @@ export class FieldElement {
         return this.mul(n)
     }
 }
+
+export function createFieldElement(num: number, prime: number){
+    return new FieldElement(num,prime)
+
+}

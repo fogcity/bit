@@ -3,11 +3,13 @@ import { createRoot } from "react-dom/client";
 
 
 import { useEffect } from "react";
-import {Point} from  "../lib";
+import {Point,createFiniteField} from  "../lib";
 const container = document.getElementById("root");
 const root = createRoot(container);
-const a = new Point(-1,-1,5,7)
 
+const f107 = createFiniteField(107)
+const a = f107[5]
+console.log(a);
 
 root.render(
   <React.StrictMode>

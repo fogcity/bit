@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 
 
 import { useEffect } from "react";
-import {Point,createFiniteField} from  "../lib";
+import {createFiniteField} from  "../lib";
 const container = document.getElementById("root");
 const root = createRoot(container);
 

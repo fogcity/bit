@@ -1,3 +1,3 @@
 export *  from './Point'
-export *  from './FieldElement'
+export *  from './FiniteFieldElement'
 export * from './FiniteField'

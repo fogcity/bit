@@ -16,8 +16,8 @@
     "rootDir": "./",
     "skipLibCheck": true,
     "strict": true,
-    "target": "es2018",
-    "lib": ["es2019", "es2019.Array", "dom", "esnext"]
+    "target": "es2020",
+    "lib": ["es2020", "dom", "esnext"]
   },
   "include": ["lib/.d.ts", "lib"]
 }

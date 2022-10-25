@@ -1,14 +1,14 @@
-import { FieldElement ,createFieldElement} from "./FieldElement";
+import { FiniteFieldElement ,createFiniteFieldElement} from "./FiniteFieldElement";
 
 export class FiniteField {
     constructor(public prime:number){
 
     }
-    createFieldElement(num:number){
-        return createFieldElement(num,this.prime)
+    createFiniteFieldElement(num:number){
+        return createFiniteFieldElement(num,this.prime)
     }
     toArray(){
-    return [...new FiniteField(this.prime)] as FieldElement[]
+    return [...new FiniteField(this.prime)] as FiniteFieldElement[]
     }
     [Symbol.iterator]() {
         return {
@@ -18,7 +18,7 @@ export class FiniteField {
           next() {
 
             if (this.current < this.last) {
-              return { done: false, value: new FieldElement(this.current++,this.last) };
+              return { done: false, value: new FiniteFieldElement(this.current++,this.last) };
             } else {
               return { done: true };
             }
@@ -32,7 +32,7 @@ export function createFiniteField(prime:number){
         get: function(target, prop, receiver) {
           if(isNaN(Number(prop)))
             return (target as any)[prop]
-          else return target.createFieldElement(Number(prop));
+          else return target.createFiniteFieldElement(Number(prop));
         }
       })
 }

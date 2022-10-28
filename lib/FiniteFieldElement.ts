@@ -1,12 +1,13 @@
 export class FiniteFieldElement {
 
-    constructor(public num: number, public prime: number) {
+    constructor(public num: bigint, public prime: bigint) {
         if (num >= prime || num < 0) {
-            throw new Error(`Num ${num} not in field range 0 to ${prime - 1}`);
+            throw new Error(`Num ${num} not in field range 0 to ${prime - 1n}`);
         }
     }
 
     isSameField(fe: FiniteFieldElement) {
+        
         return this.prime == fe.prime
     }
     eq(fe: FiniteFieldElement) {
@@ -16,42 +17,42 @@ export class FiniteFieldElement {
         return !this.eq(fe)
     }
     add(fe: FiniteFieldElement) {
-        if (!this.isSameField(fe)) {
-            throw new Error('Cannot add two numbers in different Fields');
-        }
+        this.fieldValid(fe,'add')
         const num = (this.num + fe.num) % this.prime
         return new FiniteFieldElement(num, this.prime)
     }
     sub(fe: FiniteFieldElement) {
-        if (!this.isSameField(fe)) {
-            throw new Error('Cannot sub two numbers in different Fields');
-        }
+        this.fieldValid(fe,'sub')
         const num = (this.num - fe.num) % this.prime
         return new FiniteFieldElement(num, this.prime)
     }
     mul(fe: FiniteFieldElement) {
-        if (!this.isSameField(fe)) {
-            throw new Error('Cannot sub mul numbers in different Fields');
-        }
-        const num = (this.num * fe.num) % this.prime
+        this.fieldValid(fe,'mul')
+        const num = (this.num * fe.num) %this.prime   
         return new FiniteFieldElement(num, this.prime)
     }
-    pow(exp: number) {
+    pow(exp: bigint) {
         // 利用费马小定理转换计算
-        const n = exp % (this.prime - 1)
-        const num = Math.pow(this.num, n) % this.prime
+        const n = exp % (this.prime - 1n)
+        const num =  this.num ** n % this.prime
+        console.log('1',num);
+        
         return new FiniteFieldElement(num, this.prime)
     }
     div(fe: FiniteFieldElement) {
-        if (!this.isSameField(fe)) {
-            throw new Error('Cannot sub div numbers in different Fields');
-        }
-        const n = fe.pow(this.prime - 2)
+        
+        this.fieldValid(fe,'div')
+        const n = fe.pow(this.prime - 2n)
         return this.mul(n)
+    }
+    fieldValid(fe: FiniteFieldElement,type:string){
+        if (!this.isSameField(fe)) {
+            throw new Error(`Cannot ${type} two numbers in different Fields`);
+        }
     }
 }
 
-export function createFiniteFieldElement(num: number, prime: number){
+export function createElement(num: bigint, prime: bigint){
     return new FiniteFieldElement(num,prime)
 
 }

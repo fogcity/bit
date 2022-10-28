@@ -1,5 +1,5 @@
 // export class Point {
-//     constructor(public x: number, public y: number, public a: number, public b: number) {
+//     constructor(public x: bigint, public y: bigint, public a: bigint, public b: bigint) {
 //         if (x == FiniteFieldPoint.INF && y == FiniteFieldPoint.INF)
 //             return
 //         if (this.y ** 2 != this.x ** 3 + a * x + b)
@@ -21,7 +21,7 @@
 //             return p
 //         if (p.x == FiniteFieldPoint.INF)
 //             return this
-//         let s: number;
+//         let s: bigint;
 //         // 求直线斜率，求交点
 //         if (this.x == p.x && this.y == p.y) {
 //             // 两点相同时切线的斜率等于该点的导数
@@ -34,56 +34,62 @@
 //     static INF = Infinity
 // }
 
-import { createFiniteFieldElement, FiniteFieldElement } from "./FiniteFieldElement";
+import { createElement, FiniteFieldElement } from "./FiniteFieldElement";
+
+const createINFPoint = (a: bigint, b: bigint, p: bigint) => new FiniteFieldPoint(0n, 0n, a, b, p)
 export class FiniteFieldPoint {
-
-
-    x: FiniteFieldElement;
-    y: FiniteFieldElement;
-    a: FiniteFieldElement;
-    b: FiniteFieldElement;
-
-    constructor( x: number,  y: number,  a: number,  b: number, public p:number) {
-        this.x = createFiniteFieldElement(x,this.p) 
-        this.y = createFiniteFieldElement(y,this.p) 
-        this.a = createFiniteFieldElement(a,this.p) 
-        this.b = createFiniteFieldElement(b,this.p) 
-
-        if (x == Infinity && y== Infinity)
+    constructor(public x: bigint, public y: bigint, public a: bigint, public b: bigint, public p: bigint) {
+        // 检验是否是无穷远点
+        if (x == 0n && y == 0n)
             return
-        if (this.y.pow(2).ne(this.x.pow(3).add(this.a.mul(this.x)).add(this.b)))
+
+        if ((y ** 2n) % p != (x ** 3n + a * x + b) % p)
             throw new Error(`(${x}, ${y}) is not on the curve`);
+
     }
     eq(p: FiniteFieldPoint) {
-        return this.x.eq(p.x) && this.y.eq(p.y)
-            && this.a.eq(p.a) && this.b.eq(p.b)
+        return this.x == p.x && this.y == p.y
+            && this.a == p.a && this.b == p.b
     }
     ne(p: FiniteFieldPoint) {
         return !this.eq(p)
     }
     add(p: FiniteFieldPoint) {
-        if (this.a.ne(p.a) || this.b.ne(p.b))
-            throw new Error(`Points (${this.x.toString()},${this.y.toString()}), (${p.x.toString()},${p.y.toString()}) are not on the same curve`);
+        if (this.a != p.a || this.b != p.b)
+            throw new Error(`Points (${this.x},${this.y}), (${p.x},${p.y}) are not on the same curve`);
         if (this.x == p.x && this.y != p.y)
-            return new FiniteFieldPoint(Infinity, Infinity, this.a.num, this.b.num,this.p)
-        if (this.x.num == Infinity)
+            return createINFPoint(this.a, this.b, this.p)
+        if (this.x == 0n)
             return p
-        if (p.x.num == Infinity)
+        if (p.x == 0n)
             return this
 
-        let s: FiniteFieldElement;
+        let s: bigint;
         // 求直线斜率，求交点
         if (this.x == p.x && this.y == p.y) {
             // 两点相同时切线的斜率等于该点的导数
-            s = this.x.mul(createFiniteFieldElement(3,this.p)).pow(2).add(this.a.div(createFiniteFieldElement(2,this.p)).mul(this.x))
-        } else s = (p.y - this.y) / (p.x - this.x)
-        const x = Math.pow(s, 2) - this.x - p.x
-        const y = s * (this.x - x) - this.y
-        return new FiniteFieldPoint(x, y, this.a, this.b,this.p)
-    }
-    rmul(t:number){
+            s = (this.x * 3n) ** 2n + (this.a / 2n * this.x)
+        } else s = (p.y - this.y)*((p.x - this.x)**(this.p-2n))%this.p
+        
+        const x = (s ** 2n - this.x - p.x) % this.p
 
+        const y = (s * (this.x - x) - this.y) % this.p
+        
+        return new FiniteFieldPoint(x, y, this.a, this.b, this.p)
     }
-    
+    mul(c: bigint) {
+        let coef = c
+        let current = new FiniteFieldPoint(this.x, this.y, this.a, this.b, this.p)
+        let result = createINFPoint(this.a, this.b, this.p)
+        while (coef) {
+            if (coef & 1n) {
+                result = result.add(current)
+            }
+            current = current.add(current)
+            coef >>= 1n
+        }
+        return result
+    }
+
 }
 

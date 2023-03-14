@@ -1,3 +1,6 @@
+export function mod(n:bigint, m:bigint) {
+    return ((n % m) + m) % m;
+  }
 export class FiniteFieldElement {
 
     constructor(public num: bigint, public prime: bigint) {
@@ -16,35 +19,35 @@ export class FiniteFieldElement {
     ne(fe: FiniteFieldElement) {
         return !this.eq(fe)
     }
-    add(fe: FiniteFieldElement) {
-        this.fieldValid(fe,'add')
-        const num = (this.num + fe.num) % this.prime
-        return new FiniteFieldElement(num, this.prime)
+    add(n: bigint) {
+
+        const num = mod((this.num + n) ,this.prime)
+        return createFFE(num, this.prime)
     }
-    sub(fe: FiniteFieldElement) {
-        this.fieldValid(fe,'sub')
-        const num = (this.num - fe.num) % this.prime
-        return new FiniteFieldElement(num, this.prime)
+    sub(n: bigint) {
+
+        const num = mod((this.num - n) , this.prime)
+        return createFFE(num, this.prime)
     }
-    mul(fe: FiniteFieldElement) {
-        this.fieldValid(fe,'mul')
-        const num = (this.num * fe.num) %this.prime   
-        return new FiniteFieldElement(num, this.prime)
+    mul(n: bigint) {
+
+        const num = mod((this.num * n) ,this.prime)   
+        return createFFE(num, this.prime)
     }
     pow(exp: bigint) {
         // 利用费马小定理转换计算
-        const n = exp % (this.prime - 1n)
-        const num =  this.num ** n % this.prime
-        console.log('1',num);
+        const n = mod(exp , (this.prime - 1n))
+        const num =  mod(this.num ** n , this.prime)
         
-        return new FiniteFieldElement(num, this.prime)
+        return createFFE(num, this.prime)
     }
+
     div(fe: FiniteFieldElement) {
-        
-        this.fieldValid(fe,'div')
+      
         const n = fe.pow(this.prime - 2n)
-        return this.mul(n)
+        return this.mul(n.num)
     }
+    
     fieldValid(fe: FiniteFieldElement,type:string){
         if (!this.isSameField(fe)) {
             throw new Error(`Cannot ${type} two numbers in different Fields`);
@@ -52,7 +55,7 @@ export class FiniteFieldElement {
     }
 }
 
-export function createElement(num: bigint, prime: bigint){
+export function createFFE(num: bigint, prime: bigint){
     return new FiniteFieldElement(num,prime)
 
 }

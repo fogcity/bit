@@ -1,4 +1,4 @@
-import { FiniteFieldElement ,createElement} from "./FiniteFieldElement";
+import { FiniteFieldElement ,createFFE, mod} from "./FiniteFieldElement";
 import { FiniteFieldPoint } from "./Point";
 
 export class FiniteField {
@@ -6,14 +6,26 @@ export class FiniteField {
 
     }
     createElement(num:bigint){
-        return createElement(num,this.prime)
+        return createFFE(num,this.prime)
     } 
     createCurve(a: bigint,  b: bigint){
       return (x: bigint,  y: bigint) => {
         return new FiniteFieldPoint(x,y,a,b,this.prime)
       }
     }
-   
+
+     sub(...elements:bigint[]){
+      return this.createElement(elements.reduce((r,v,i)=>r-v))
+    }
+
+    add(...elements:bigint[]){
+      return this.createElement(elements.reduce((r,v,i)=>r+v))
+    }
+
+     mul(...elements:bigint[]){
+      return this.createElement(elements.reduce((r,v,i)=>r*v))
+     }
+
     toArray(){
     return [...new FiniteField(this.prime)] as FiniteFieldElement[]
     }
@@ -34,7 +46,7 @@ export class FiniteField {
       }
 }
 
-export function createFiniteField(prime:bigint){
+export function creatFF(prime:bigint){
     return new Proxy(new FiniteField(prime), {
         get: function(target, prop, receiver) {
           if(isNaN(Number(prop)))

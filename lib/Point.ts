@@ -34,7 +34,7 @@
 //     static INF = Infinity
 // }
 
-import { createElement, FiniteFieldElement } from "./FiniteFieldElement";
+import { createFFE, FiniteFieldElement } from "./FiniteFieldElement";
 
 const createINFPoint = (a: bigint, b: bigint, p: bigint) => new FiniteFieldPoint(0n, 0n, a, b, p)
 export class FiniteFieldPoint {

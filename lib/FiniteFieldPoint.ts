@@ -34,14 +34,20 @@
 //     static INF = Infinity
 // }
 
-import { createFFE, FFE } from './FiniteFieldElement';
+import { createFFE, FiniteFieldElement } from './FiniteFieldElement';
 
-const createINFPoint = (a: FFE, b: FFE, p: bigint) => {
+const createINFPoint = (a: FiniteFieldElement, b: FiniteFieldElement, p: bigint) => {
   const inf = createFFE(0n, p);
   return new FiniteFieldPoint(inf, inf, a, b, p);
 };
 export class FiniteFieldPoint {
-  constructor(public x: FFE, public y: FFE, public a: FFE, public b: FFE, public p: bigint) {
+  constructor(
+    public x: FiniteFieldElement,
+    public y: FiniteFieldElement,
+    public a: FiniteFieldElement,
+    public b: FiniteFieldElement,
+    public p: bigint,
+  ) {
     // 检验是否是无穷远点
     if (x.isINF() && y.isINF()) return;
 
@@ -64,7 +70,7 @@ export class FiniteFieldPoint {
     if (this.x.isINF()) return p;
     if (p.x.isINF()) return this;
 
-    let s: FFE;
+    let s: FiniteFieldElement;
     // 求直线斜率，求交点
     if (this.x == p.x && this.y == p.y) {
       // 两点相同时切线的斜率等于该点的导数

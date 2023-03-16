@@ -52,8 +52,6 @@ export class FiniteFieldElement {
   }
 }
 
-class FFE extends FiniteFieldElement {}
-export { FFE };
 export function createFFE(num: bigint, prime: bigint) {
   return new FiniteFieldElement(num, prime);
 }

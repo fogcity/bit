@@ -1,4 +1,4 @@
-import { FiniteFieldElement, createFFE, mod, FFE } from './FiniteFieldElement';
+import { createFFE, mod, FiniteFieldElement } from './FiniteFieldElement';
 import { FiniteFieldPoint } from './FiniteFieldPoint';
 
 export class FiniteField {
@@ -6,8 +6,8 @@ export class FiniteField {
   createElement(num: bigint) {
     return createFFE(num, this.prime);
   }
-  createCurve(a: FFE, b: FFE) {
-    return (x: FFE, y: FFE) => {
+  createCurve(a: FiniteFieldElement, b: FiniteFieldElement) {
+    return (x: FiniteFieldElement, y: FiniteFieldElement) => {
       return new FiniteFieldPoint(x, y, a, b, this.prime);
     };
   }

@@ -3,7 +3,7 @@
 // ·确定有限域需要的质数p。
 // ·确定起点G的坐标（gx，gy）。
 
-import { createFFE, FiniteFieldElement } from './FiniteFieldElement';
+import { createFFE, FiniteFieldElement, mod } from './FiniteFieldElement';
 import { FiniteFieldPoint } from './FiniteFieldPoint';
 
 // ·确定通过G生成的群的阶数n。
@@ -27,18 +27,23 @@ export class EllipticCurve {
 }
 
 export class Secp256k1 extends EllipticCurve {
-  constructor(a: bigint, b: bigint) {
-    const p = BigInt(2 ** 256 - 2 ** 32 - 977);
-    super(createFFE(a, p), createFFE(b, p), p);
+  constructor() {
+    const p = Secp256k1.p;
+    super(createFFE(0n, p), createFFE(0n, p), p);
   }
+  static p = BigInt(2 ** 256 - 2 ** 32 - 977);
+  static a = createFFE(0n, this.p);
+  static b = createFFE(7n, this.p);
+  static Gx = createFFE(BigInt(5.5066263022277344e76), this.p);
+  static Gy = createFFE(BigInt(3.2670510020758816e76), this.p);
+  static G = new FiniteFieldPoint(Secp256k1.Gx, Secp256k1.Gy, Secp256k1.a, Secp256k1.b, this.p);
+  static N = BigInt(1.157920892373162e77);
+  static mod = (n: bigint) => mod(n, Secp256k1.N);
   group() {
-    const gx = createFFE(BigInt(5.5066263022277344e76), this.p);
-    const gy = createFFE(BigInt(3.2670510020758816e76), this.p);
-    const g = this.point(gx, gy);
-    return super.group(g, BigInt(1.157920892373162e77));
+    return super.group(Secp256k1.G, Secp256k1.N);
   }
 }
 
-export function secp256k1Group() {
-  return new Secp256k1(0n, 7n).group();
+export function s256() {
+  return new Secp256k1();
 }

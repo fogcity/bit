@@ -34,7 +34,9 @@
 //     static INF = Infinity
 // }
 
-import { createFFE, FiniteFieldElement } from './FiniteFieldElement';
+import { Secp256k1 } from './EllipticCurve';
+import { createFFE, FiniteFieldElement, mod } from './FiniteFieldElement';
+import { Signature } from './Signature';
 
 const createINFPoint = (a: FiniteFieldElement, b: FiniteFieldElement, p: bigint) => {
   const inf = createFFE(0n, p);
@@ -98,4 +100,17 @@ export class FiniteFieldPoint {
     }
     return result;
   }
+
+  verify(z: bigint, sig: Signature) {
+    const { r, s } = sig;
+    const { mod, G, N } = Secp256k1;
+    const s_inv = mod(s ** (N - 2n));
+    const u = mod(z * s_inv);
+    const v = mod(r * s_inv);
+
+    const total = G.mul(u).add(this.mul(v));
+    return total.x.num === r;
+  }
+
+  sec() {}
 }
